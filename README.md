@@ -1,6 +1,6 @@
 # RedCodeJudge
 
-## 🚀 Official automated testing tool for the RedCodeNinja Team.
+## 🚀 Official automated testing tool for the RedCodeNinja Team
 
 **RedCodeJudge** is a command-line tool designed to streamline the testing of competitive programming solutions. It automates the process of compiling, running, and validating your code against a set of test cases, providing clear and colorful feedback on its performance.
 
@@ -22,11 +22,27 @@ This tool is perfect for:
 - **Verbose Mode**: A verbose option `-v` to display the full I/O for each test case, making debugging easier.
 - **Isolated Workspace**: Each execution creates a separate working directory to store compilation artifacts and test results, keeping your source directory clean.
 
+## 📋 Prerequisites
+
+Before you begin, ensure you have Python 3 installed on your system. You can check your Python version by running:
+
+```bash
+python3 --version
+```
+
 ## 📦 Installation
 
-No complex installation is required. Just clone this repository or download the `redcodejudge.py` script.
+1. Clone the repository to your local machine.
+   ```bash
+   git clone <repository-url>
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd <repository-directory>
+   ```
+No further installation steps are needed. You can run the script directly.
 
-##  usage
+## 💡 Usage
 
 Execute the script using Python 3, providing the path to your source code, the programming language, and the directories for input and output files.
 
