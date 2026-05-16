@@ -11,20 +11,26 @@ This tool is perfect for:
 
 ## ✨ Features
 
-- **Multiple Languages Supported**: Test solutions written in C, C++, Java, and Python.
+- **Multiple Languages Supported**: Test solutions written in C, C++, Java, and Python with **automatic language detection**.
 - **Rich Feedback**: Get status on each test case:
   - ✅ **AC (Accepted)**: Your program's output matches the expected output.
   - ⛔ **WA (Wrong Answer)**: Your program's output differs from the expected output.
-  - 🐌 **TLE (Time Limit Exceeded)**: Your program took too long to execute.
+  - 🐌 **TLE (Time Limit Exceeded)**: Your program took too long to execute (10s limit).
   - 💣 **RTE (Runtime Error)**: Your program crashed or returned a non-zero exit code.
-- **Detailed Diff**: For **Wrong Answer** verdicts, a quick diff is displayed to help you spot the differences between your output and the expected one.
+- **Detailed Diff**: For **Wrong Answer** verdicts, a quick unified diff is displayed to help you spot the differences.
 - **Performance Summary**: Get a final score with an accuracy percentage and a summary of the results.
 - **Verbose Mode**: A verbose option `-v` to display the full I/O for each test case, making debugging easier.
-- **Isolated Workspace**: Each execution creates a separate working directory to store compilation artifacts and test results, keeping your source directory clean.
+- **Isolated Workspace**: Each execution creates a separate hidden directory (e.g., `.redcodejudge-2023...`) to store compilation artifacts and test results.
 
 ## 📋 Prerequisites
 
-Before you begin, ensure you have Python 3 installed on your system. You can check your Python version by running:
+Before you begin, ensure you have Python 3 installed. Depending on the language you are testing, you may also need:
+
+- **C**: `gcc`
+- **C++**: `g++` (supports C++17)
+- **Java**: `javac` and `java`
+
+You can check your Python version by running:
 
 ```bash
 python3 --version
@@ -38,25 +44,28 @@ python3 --version
    ```
 2. Navigate to the project directory:
    ```bash
-   cd <repository-directory>
+   cd redcodejudge
    ```
-No further installation steps are needed. You can run the script directly.
+3. (Optional) Make the script executable:
+   ```bash
+   chmod +x redcodejudge.py
+   ```
 
 ## 💡 Usage
 
-Execute the script using Python 3, providing the path to your source code, the programming language, and the directories for input and output files.
+Execute the script providing the path to your source code and the directories for input and output files.
 
 ```bash
-python3 redcodejudge.py <source_file> --lang <language> -i <input_dir> -o <output_dir>
+python3 redcodejudge.py <source_file> -i <input_dir> -o <output_dir> [options]
 ```
 
 ### Arguments
 
 - `source_file`: Path to your source code file (e.g., `problem.cpp`).
-- `--lang`: The programming language. Choices: `c`, `cpp`, `java`, `python`.
 - `-i, --input-dir`: Directory containing input test files (e.g., `.in`, `.txt`).
 - `-o, --output-dir`: Directory containing the corresponding expected output files (e.g., `.out`, `.sol`).
-- `-w, --work-dir` (Optional): Directory to store build artifacts and results. If not provided, a temporary directory is created.
+- `--lang` (Optional): The programming language. Choices: `c`, `cpp`, `java`, `python`. If omitted, it is auto-detected from the file extension.
+- `-w, --work-dir` (Optional): Specific directory to store build artifacts and results.
 - `-v, --verbose` (Optional): Enables verbose mode to show detailed I/O for each test case.
 
 ### Example
@@ -80,7 +89,7 @@ Imagine the following directory structure:
 To test the `B.cpp` solution, you would run:
 
 ```bash
-python3 redcodejudge.py /my_contest/solutions/B.cpp --lang cpp -i /my_contest/problems/B/in -o /my_contest/problems/B/out
+python3 redcodejudge.py /my_contest/solutions/B.cpp -i /my_contest/problems/B/in -o /my_contest/problems/B/out
 ```
 
 ## 📝 License
