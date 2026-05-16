@@ -19,7 +19,7 @@ from datetime import datetime
 # ==============================================================================
 
 PROJECT = "RedCodeJudge"
-VERSION = "0.4.0"
+VERSION = "0.4.2"
 AUTHOR  = "RedCodeNinja Team"
 
 if sys.platform == "win32":
@@ -55,8 +55,9 @@ class Icons:
     UNK         = '👽'
 
     INPUT       = '📥'
-    OUTPUT      = '🎯'
-    RESULT      = '💬'
+    OUTPUT      = '📤'
+    SOL         = '🎯'
+    
 
     BUILD       = '🔨'
     RUN         = '🚀'
@@ -189,10 +190,10 @@ class UI:
             print(f"   {status['color']}│{Colors.RESET} {Colors.BLUE}{Icons.INPUT} INPUT:{Colors.RESET}")
             for line in truncate(input): print(f"   {status['color']}│{Colors.RESET}    {line}")
             
-            print(f"   {status['color']}│{Colors.RESET} {Colors.BLUE}{Icons.OUTPUT} OUTPUT:{Colors.RESET}")
+            print(f"   {status['color']}│{Colors.RESET} {Colors.BLUE}{Icons.SOL} OUTPUT:                   (Solution){Colors.RESET}")
             for line in truncate(output): print(f"   {status['color']}│{Colors.RESET}    {line}")
 
-            print(f"   {status['color']}│{Colors.RESET} {status['color']}{Icons.RESULT} RESULT:                   (Test Result){Colors.RESET}")
+            print(f"   {status['color']}│{Colors.RESET} {status['color']}{Icons.OUTPUT} OUTPUT:                   (Test){Colors.RESET}")
             for line in truncate(result): print(f"   {status['color']}│{Colors.RESET}    {line}")
 
             print(f"   {status['color']}└────────────────────────────────────────────────────{Colors.RESET}")
@@ -243,6 +244,15 @@ COMMANDS = {
     'java': {
         'compile': ['javac', '{src}', '-d', '{dir}'], 
         'run': ['java', '-cp', '{dir}', '{filename_no_ext}']}
+}
+
+EXTENSIONS = {
+    '.py': 'python',
+    '.c': 'c',
+    '.cpp': 'cpp',
+    '.cc': 'cpp',
+    '.cxx': 'cpp',
+    '.java': 'java'
 }
 
 TIMEOUT = 10.000
@@ -361,7 +371,7 @@ Official Local Judge for Competitive Programming.
 Executes code against input files and compares with solutions.
     
 Usage:
-  python redcode_judge.py B.cpp --lang cpp --input ./contest/B/in --output ./contest/B/out
+  python redcode_judge.py B.cpp --input ./contest/B/in --output ./contest/B/out
   python redcode_judge.py A.py  --lang python --input ./in --output ./out --work_dir ./my_results
     """
     
@@ -372,7 +382,7 @@ Usage:
     )
     
     parser.add_argument('file', help='Source code file path')
-    parser.add_argument('--lang', choices=['c', 'cpp', 'java', 'python'], required=True, help='Programming language')
+    parser.add_argument('--lang', choices=['c', 'cpp', 'java', 'python'], required=False, help='Programming language (Auto-detected if omitted)')
     
     parser.add_argument('-i','--input-dir', required=True, help='Directory containing input files (.in)')
     parser.add_argument('-o','--output-dir', required=True, help='Directory containing expected output files (.sol, .out)')
@@ -391,6 +401,14 @@ Usage:
     if not source.exists(): 
         sys.exit(f"{Colors.RED}Source file '{source}' not found.{Colors.RESET}")
 
+    # Language detection
+    lang = args.lang
+    if not lang:
+        lang = EXTENSIONS.get(source.suffix.lower())
+    
+    if not lang:
+        sys.exit(f"{Colors.RED}Error: Could not auto-detect language for extension '{source.suffix}'. Please specify with --lang.{Colors.RESET}")
+
     if not input_dir.exists(): 
         sys.exit(f"{Colors.RED}Input directory '{input_dir}' not found.{Colors.RESET}")
 
@@ -406,7 +424,7 @@ Usage:
     work_dir.mkdir(parents=True, exist_ok=True)
 
     try:
-        command = compile(args.lang, source, work_dir)
+        command = compile(lang, source, work_dir)
 
         if command:
             run(command, input_dir, output_dir, work_dir, args.verbose)
