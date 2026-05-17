@@ -267,7 +267,7 @@ def extract(path):
 def normalize(text):
     return [line.rstrip() for line in text.strip().splitlines()]
 
-def compile(lang, source, work_dir):
+def compile(lang, source, workspace_dir):
     UI.section("Step #1: Building", Icons.BUILD)
     
     config = COMMANDS.get(lang)
@@ -275,11 +275,11 @@ def compile(lang, source, work_dir):
     if not config: 
         sys.exit(f"{Colors.RED}Language '{lang}' not supported.{Colors.RESET}")
     
-    exe = work_dir / (source.stem + (".exe" if sys.platform=="win32" and lang in ['c','cpp'] else ""))
+    exe = workspace_dir / (source.stem + (".exe" if sys.platform=="win32" and lang in ['c','cpp'] else ""))
 
     if config['compile']:
         start = time.time()
-        cmd = [arg.format(src=str(source), exe=str(exe), dir=str(work_dir)) for arg in config['compile']]
+        cmd = [arg.format(src=str(source), exe=str(exe), dir=str(workspace_dir)) for arg in config['compile']]
 
         try:
             subprocess.run(cmd, check=True, capture_output=True)
@@ -290,9 +290,9 @@ def compile(lang, source, work_dir):
     else:
         UI.message(f"Skiping build step...", Icons.STEP, Colors.GREY)
 
-    return [arg.format(src=str(source), exe=str(exe), dir=str(work_dir), filename_no_ext=source.stem) for arg in config['run']]
+    return [arg.format(src=str(source), exe=str(exe), dir=str(workspace_dir), filename_no_ext=source.stem) for arg in config['run']]
 
-def run(command, input_dir, output_dir, work_dir, verbose=False):
+def run(command, input_dir, output_dir, workspace_dir, verbose=False):
     UI.section(f"Step #2: Running", Icons.RUN)
 
     input_files = sorted([f for f in (input_dir).glob('*') if f.is_file()])
@@ -300,7 +300,7 @@ def run(command, input_dir, output_dir, work_dir, verbose=False):
     if not input_files:
         sys.exit(f"{Colors.RED}No input files found in directory '{input_dir}'.{Colors.RESET}")
 
-    result_dir = work_dir / "output"
+    result_dir = workspace_dir / "output"
     result_dir.mkdir(parents=True, exist_ok=True)
 
     stats = {'AC': 0, 'WA': 0, 'TLE': 0, 'RTE': 0}
@@ -372,7 +372,7 @@ Executes code against input files and compares with solutions.
     
 Usage:
   python redcode_judge.py B.cpp --input ./contest/B/in --output ./contest/B/out
-  python redcode_judge.py A.py  --lang python --input ./in --output ./out --work_dir ./my_results
+  python redcode_judge.py A.py  --lang python --input ./in --output ./out --workspace_dir ./my_results
     """
     
     parser = argparse.ArgumentParser(
@@ -386,7 +386,7 @@ Usage:
     
     parser.add_argument('-i','--input-dir', required=True, help='Directory containing input files (.in)')
     parser.add_argument('-o','--output-dir', required=True, help='Directory containing expected output files (.sol, .out)')
-    parser.add_argument('-w','--work-dir', required=False, help='Directory for build artifacts and test results (Optional)')
+    parser.add_argument('-w','--workspace-dir', required=False, help='Directory for build artifacts and test results (Optional)')
     
     parser.add_argument('-v', '--verbose', action='store_true', help='Show detailed I/O for debugging')
     
@@ -415,19 +415,19 @@ Usage:
     if not output_dir.exists(): 
         sys.exit(f"{Colors.RED}Output (Solution) directory '{output_dir}' not found.{Colors.RESET}")
 
-    if args.work_dir:
-        work_dir = Path(args.work_dir).resolve()
+    if args.workspace_dir:
+        workspace_dir = Path(args.workspace_dir).resolve()
     else:
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-        work_dir = Path(f".redcodejudge-{timestamp}-{source.stem}").resolve()
+        workspace_dir = Path(f".redcodejudge-{timestamp}-{source.stem}").resolve()
     
-    work_dir.mkdir(parents=True, exist_ok=True)
+    workspace_dir.mkdir(parents=True, exist_ok=True)
 
     try:
-        command = compile(lang, source, work_dir)
+        command = compile(lang, source, workspace_dir)
 
         if command:
-            run(command, input_dir, output_dir, work_dir, args.verbose)
+            run(command, input_dir, output_dir, workspace_dir, args.verbose)
     finally:
         pass
 

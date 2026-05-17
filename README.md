@@ -65,7 +65,7 @@ python3 redcodejudge.py <source_file> -i <input_dir> -o <output_dir> [options]
 - `-i, --input-dir`: Directory containing input test files (e.g., `.in`, `.txt`).
 - `-o, --output-dir`: Directory containing the corresponding expected output files (e.g., `.out`, `.sol`).
 - `--lang` (Optional): The programming language. Choices: `c`, `cpp`, `java`, `python`. If omitted, it is auto-detected from the file extension.
-- `-w, --work-dir` (Optional): Specific directory to store build artifacts and results.
+- `-w, --workspace-dir` (Optional): Specific directory to store build artifacts and results.
 - `-v, --verbose` (Optional): Enables verbose mode to show detailed I/O for each test case.
 
 ### Example
